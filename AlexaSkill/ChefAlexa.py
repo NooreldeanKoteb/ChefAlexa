@@ -4,6 +4,8 @@ import math
 import urllib.request
 import boto3
 
+import allrecipes as ar
+
 ######################################
 #          Global Variables          #
 ######################################
@@ -12,7 +14,17 @@ dynamodb = boto3.resource('dynamodb')
 ChefAlexaTable = dynamodb.Table('ChefAlexa')
 #################
 
+# Other Global Variables
+
 phase = 0
+
+foodName = [None]
+
+
+# foodNum = [None]
+
+
+######################################
 
 ######################################
 #          General Functions         #
@@ -21,7 +33,7 @@ phase = 0
 def updateUsers():
     global users
 
-    with urllib.request.urlopen("https://dralexa2.pythonanywhere.com/patientInfo/") as url:
+    with urllib.request.urlopen("https://dralexa2.pythonanywhere.com/") as url:
         users = json.loads(url.read().decode())
     return users
 
@@ -31,6 +43,7 @@ def databaseUpdate():
     ChefAlexaTable.put_item(
         Item={
             'ID': 0,
+            'Ingredient': foodName,
         }
     )
     return
@@ -43,129 +56,149 @@ def databaseUpdate():
 # Builders
 ##############################
 
-def build_speechlet_response(title, output, reprompt_text, should_end_session):
-    return {
-        'response': {
-            'outputSpeech': {
-                'type': 'PlainText',
-                'text': output
-            },
-            'card': {
-                'type': 'Simple',
-                'title': "SessionSpeechlet - " + title,
-                'content': "SessionSpeechlet - " + output
-            },
-            'reprompt': {
-                'outputSpeech': {
-                    'type': 'PlainText',
-                    'text': reprompt_text
-                }
-            },
-            'shouldEndSession': should_end_session
-        }
-    }
 
-
-def build_SSML(greeting, output, should_end_session, new_session):
+def build_SSML(output):
     return {
         'response': {
             'outputSpeech': {
                 'type': 'SSML',
-                'ssml': '<speak> <p>' + greeting + '</p> <prosody rate="90%"><p>' + output + '</p> <audio src = "https://emptysound.s3.amazonaws.com/EmptySound.mp3" /> </prosody> </speak>'
+                'ssml': '<speak>' + output + '</speak>'
             },
             'card': {
                 'type': 'Simple',
-                'title': "SessionSpeechlet - " + greeting,
-                'content': "SessionSpeechlet - " + output
+                'title': "SessionSpeechlet - Ingredients ",
+                'content': "SessionSpeechlet - " + str(foodName[0])
             },
             'reprompt': {
                 'outputSpeech': {
                     'type': 'SSML',
-                    'ssml': '<speak> <p>' + greeting + '</p> <prosody rate="85%"><p>' + output + '</p> <audio src = "https://emptysound.s3.amazonaws.com/EmptySound.mp3" /> </prosody> </speak>'
+                    'ssml': '<speak>' + output + '</speak>'
                 }
             },
-            'shouldEndSession': should_end_session,
+            'shouldEndSession': False,
             'session': {
-                'new': new_session
+                'new': True
             }
         }
     }
 
 
-def build_PlainSpeech(body):
-    speech = {}
-    speech['type'] = 'PlainText'
-    speech['text'] = body
-    return speech
-
-
-def build_response(message, session_attributes={}):
-    response = {}
-    response['version'] = '1.0'
-    response['sessionAttributes'] = session_attributes
-    response['response'] = message
-    return response
-
-
-def build_SimpleCard(title, body):
-    card = {}
-    card['type'] = 'Simple'
-    card['title'] = title
-    card['content'] = body
-    return card
-
-
-##############################
-# Responses
-##############################
-
-# deals with conversation between user and Alexa
-def conversation(title, body, session_attributes):
-    speechlet = {}
-    speechlet['outputSpeech'] = build_PlainSpeech(body)
-    speechlet['card'] = build_SimpleCard(title, body)
-    speechlet['shouldEndSession'] = False
-    return build_response(speechlet, session_attributes=session_attributes)
-
-
-# is a simple one way statement expecting no input from user
-def statement(title, body):
-    speechlet = {}
-    speechlet['outputSpeech'] = build_PlainSpeech(body)
-    speechlet['card'] = build_SimpleCard(title, body)
-    speechlet['shouldEndSession'] = False
-    # return build_response(speechlet)
-    return build_SSML("", body, False, False)
-
-
-# this creats a dialog message which is sent to build_response
-def continue_dialog():
-    message = {}
-    message['shouldEndSession'] = False
-    message['directives'] = [{'type': 'Dialog.Delegate'}]
-    return build_response(message)
+def get_perm():
+    # access_token = event['context']['System']['apiAccessToken']
+    # email = str(access_token) + '/v2/accounts/~current/settings/Profile.email'
+    return {
+        "response": {
+            'outputSpeech': {
+                'type': 'SSML',
+                'ssml': '<speak> Please grant permissions in the alexa app in order to get your name and email.</speak>'
+            },
+            "card": {
+                "type": "AskForPermissionsConsent",
+                "permissions": [
+                    "alexa::profile:name:read",
+                    "alexa::profile:email:read"
+                ]
+            }
+        }
+    }
 
 
 ##############################
 # Custom Intents
 ##############################
 
+# Adds food item to the list
+def addItem(event, context):
+    global foodName
+    # global foodNum
+
+    foodItem = event['request']['intent']['slots']['Food']['value']
+
+    if foodName[0] == None:
+        foodName[0] = foodItem
+    else:
+        foodName.append(foodItem)
+
+    # try:
+    #     foodNumber = event['request']['intent']['slots']['Number']['value']
+    #     if foodNum[0] == None:
+    #         foodNum[0] = foodNumber
+    #     else:
+    #         foodNum.append(foodNumber)
+    # except:
+    #     if foodNum[0] == None:
+    #         foodNum[0] = 1
+    #     else:
+    #         foodNum.append(1)
+
+    return build_SSML("Added!")
+
+
+# When the user finished ingredients list
+def Done(event, context):
+    databaseUpdate()
+    # ans = ""
+    # for i in range(len(foodName)):
+    #     if(i == len(foodName)-1):
+    #         ans += "and "
+    #     ans += str(foodNum[i]) + " " + str(foodName[i])
+    #     if(i != len(foodName)-1):
+    #         ans += ", "
+    #     else:
+    #         ans += " "
+    return Calculate()
+    # return build_SSML("Ok ingredients added, Checking recipe for %s" % foodName)
+
+
+inst = [None]
+
+
+def Calculate():
+    global inst
+    # keyword = input('what would you like to eat: ')
+    # inc_i = 0
+    # included = []
+    # inc_input = int(input('how many items do you want to include (max 3): '))
+    # while inc_i < inc_input:
+    #     inc_ingr = input("ingredient(s) to include: ")
+    #     included.append(inc_ingr)
+    #     inc_i +=1
+
+    # exc_i = 0
+    # excluded = []
+    # exc_input = int(input('how many items do you want to not include (max 3): '))
+    # while exc_i < exc_input:
+    #     exc_ingr = input("ingredient(s) to not include: ")
+    #     excluded.append(exc_ingr)
+    #     exc_i +=1
+    # Search :
+    query_options = {
+        "wt": "pork curry",  # Query keywords
+        "ingIncl": "olives",  # 'Must be included' ingrdients (optional)
+        "ingExcl": "onions salad",  # 'Must not be included' ingredients (optional)
+        "sort": "re"  # Sorting options : 're' for relevance, 'ra' for rating, 'p' for popular (optional)
+    }
+    query_result = asearch(query_options)
+    return build_SSML("works")
+
 
 # Resets Alexa's attention span
 def Wait(event, context):
-    return statement("Wait", "Please read the letters on the screen!")
+    return statement("Wait", "Please Pick a food item.")
 
 
 def Error(currentPhase, text):
     if currentPhase == 0:
-        return statement("Error", text + "Please select an exam Type. Would you like a visual Test or a prescription Test?")
+        return statement("Error", text + "I am sorry, there seems to be a problem, please select a food item.")
 
 
 ##############################
 # Required Intents
 ##############################
 def cancel_intent():
-    return statement("CancelIntent", "You want to cancel")  # don't use CancelIntent as title it causes code reference error during certification
+    return statement("CancelIntent",
+                     "You want to cancel")  # don't use CancelIntent as title it causes code reference error during certification
+
 
 def help_intent():
     return statement("HelpIntent", "You want help")  # same here don't use CancelIntent
@@ -179,15 +212,21 @@ def stop_intent():
 # On Launch
 ##############################
 def on_launch(event, context):
-    #Initialize Values Here
-
-        #INitializations
-    return build_SSML("Welcome To The Snellen Exam", "would you like to run a visual exam or a prescription exam",
-                      False, True)
+    # Initialize Values Here
+    # ChefAlexaTable.put_item(
+    #     Item={
+    #         'ID': 0,
+    #         'Ingredient': []
+    #     }
+    # )
+    # build_SSML(str(req_email))
+    # get_perm()
+    # access_token= event['context']['System']['user']['accessToken']
+    return build_SSML("Welcome to Chef Alexa, What's in your fridge?")
 
 
 def on_Exit(event, context):
-    return build_SSML("Greetings", "Thank you for choosing Snellen Exam, Bye Bye", "Bye", True, False)
+    return build_SSML("Thanks for choosing Alexa Chef")
 
 
 ##############################
@@ -198,14 +237,16 @@ def intent_router(event, context):
 
     # Custom Intents
     # Intent that is always accessible after phase 1 is completed
-    if phase >= 0:
-        elif intent == "CancelIntent":
-            return cancel_intent()
-        elif intent == "HelpIntent":
-            return help_intent()
-        elif intent == "StopIntent":
-            return stop_intent()
-
+    if intent == "ingredients":
+        return addItem(event, context)
+    elif intent == "done":
+        return Done(event, context)
+    elif intent == "CancelIntent":
+        return cancel_intent()
+    elif intent == "HelpIntent":
+        return help_intent()
+    elif intent == "StopIntent":
+        return stop_intent()
 
 
 ##############################
@@ -214,7 +255,6 @@ def intent_router(event, context):
 def lambda_handler(event, context):
     if event['request']['type'] == "LaunchRequest":
         return on_launch(event, context)
-
     elif event['request']['type'] == "IntentRequest":
         return intent_router(event, context)
     elif event['request']['type'] == "SessionEndedRequest":

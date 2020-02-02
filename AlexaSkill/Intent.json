@@ -1,0 +1,260 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "i am hungry",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "ingredients",
+                    "slots": [
+                        {
+                            "name": "Number",
+                            "type": "AMAZON.NUMBER"
+                        },
+                        {
+                            "name": "Food",
+                            "type": "AMAZON.Food"
+                        }
+                    ],
+                    "samples": [
+                        "these are the ingredients {Food}",
+                        "ingredients are {Food}",
+                        "{Food}",
+                        "i have {Food}",
+                        "{Number} {Food}",
+                        "ingredients are {Number} {Food}",
+                        "these are the ingredients {Number} {Food}",
+                        "i have {Number} {Food}"
+                    ]
+                },
+                {
+                    "name": "done",
+                    "slots": [],
+                    "samples": [
+                        "completed ",
+                        "finished",
+                        "done",
+                        "thats all"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "AMAZON.Food",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "garlic"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "onion"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "cabbage"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "spinach"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "bread"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "corn bread"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "chocolate "
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "blackberry"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "raspberry "
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "pear"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "fig"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "dates"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "pineapple"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "oranges"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "apples"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "cream cheese"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "soy sauce"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "hot sauce"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "lettuce"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "peppers"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "taco shells"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "salmon "
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "fish"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "rice"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "cheese"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "milk"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "egg plant"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "zucchini "
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "cucumber"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "beef"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "banana"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "sour cream"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "cream"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "beans"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "eggs"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "chicken"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "carrot"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "tomato"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "potato"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
