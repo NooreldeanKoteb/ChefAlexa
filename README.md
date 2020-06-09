@@ -1,4 +1,5 @@
-Hackathon Project
+36hr Hackathon Project
+
 #Cook My Goose
 
 #Inspiration
