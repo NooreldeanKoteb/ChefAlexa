@@ -1,4 +1,6 @@
+Hackathon Project
 #Cook My Goose
+
 #Inspiration
 
 About 40% of the food/agriculture produced in the USA will go to waste due to negligence: Forgetting about the food itself Past the Expiration Date Leftovers wasted (forgetting about the food itself, leftovers, past expiration date) World-wide, estimated 33% food/agriculture produce is wasted, according to IFPRI We use about 10% of the energy budget of US From that, 50% of the land is used up in the US 80% of freshwater is consumed Consider that 40% of food is wasted in US 10x food wasted as compared to someone in South East Asia Roughly 50% increase from 1970s What does this mean? This means that more than 20 lbs of food is thrown out per person Americans are wasting 165B USD every month 25% of all freshwater is being wasted what we wanted to do was address the environmental concern by: developing a program that would at least allow utilization of ingredients in full in an effort to prevent wastage of food products
